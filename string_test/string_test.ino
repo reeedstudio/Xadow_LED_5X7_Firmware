@@ -62,25 +62,32 @@ void dispStringSlide(char *str, int ts)
     
     if(len > 20)return ;
     
-    unsigned char matrix[140];
+    
+    unsigned char matrix[154];
     unsigned int matrix_i[7];
     
-    for(int i=0; i<len; i++)
-    {
-        xadowLed.getMatrix(&matrix[7*i], str[i]);
-    }
+    memset(matrix, 0, 147);
     
     for(int i=0; i<len; i++)
     {
+        xadowLed.getMatrix(&matrix[7*(i+1)], str[i]);
+    }
+    
+    len++;
+    
+
+    for(int i=0; i<len-1; i++)
+    {
+    
 
         for(int j=0; j<7; j++)
         {
             matrix_i[j] = matrix[7*i+j];
             matrix_i[j] <<= 8;
-            matrix_i[j] += matrix[7*(i+1)+j];
+            matrix_i[j] += matrix[7*(i+1)+j]<<2;
         }
         
-        for(int k=0; k<8; k++)
+        for(int k=0; k<6; k++)
         {
             putIntMatrix(matrix_i);
             delay(ts/5);
@@ -90,7 +97,7 @@ void dispStringSlide(char *str, int ts)
                 matrix_i[m] <<= 1;
             }
         }
-    }
+    } 
 }
 
 
