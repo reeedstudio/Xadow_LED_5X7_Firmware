@@ -6,44 +6,6 @@
 #include <font.h>
 
 
-
-void dispChar(char asc)
-{
-    unsigned char disp[7];
-    for(int i=0; i<7; i++)
-    {
-        int tmp = (asc-32)*7+i;
-        disp[i] = pgm_read_byte(&Font5x7[tmp]); 
-    }
-    
-    xadowLed.setDispDta(disp);
-}
-
-void dispCharSlide(char asc, int ts)
-{
-    unsigned char disp[7];
-    for(int i=0; i<7; i++)
-    {
-        int tmp = (asc-32)*7+i;
-        disp[i] = pgm_read_byte(&Font5x7[tmp]); 
-    }
-    
-    
-    for(int i=0; i<5; i++)
-    {
-    
-        for(int j=0; j<7; j++)
-        {
-            disp[j] = disp[j]<<1;
-        }
-        
-        xadowLed.setDispDta(disp);
-        
-        delay(ts/5);
-    }    
-}
-
-
 void putIntMatrix(unsigned int *matrix)
 {
     unsigned char mat[7];
@@ -51,17 +13,15 @@ void putIntMatrix(unsigned int *matrix)
     {
         mat[i] = matrix[i]>>8;
     }
-    
     xadowLed.setDispDta(mat);
 }
 
 void dispStringSlide(char *str, int ts)
 {
-
+    
     uchar len = strlen(str);
     
     if(len > 20)return ;
-    
     
     unsigned char matrix[154];
     unsigned int matrix_i[7];
@@ -75,11 +35,8 @@ void dispStringSlide(char *str, int ts)
     
     len++;
     
-
-    for(int i=0; i<len-1; i++)
+    for(int i=0; i<len; i++)
     {
-    
-
         for(int j=0; j<7; j++)
         {
             matrix_i[j] = matrix[7*i+j];
@@ -101,6 +58,64 @@ void dispStringSlide(char *str, int ts)
 }
 
 
+void dispStringSlide(uchar cycle, int ts, int len_, uchar *str)
+{
+
+    while(1)
+    {
+
+        cout << "cycle = " << cycle << endl;
+        cout << "ts = " << ts << endl;
+        cout << "len = " << len_ << endl;
+        
+        
+        int len = len_;
+        if(len > 20)return ;
+        
+        unsigned char matrix[154];
+        unsigned int matrix_i[7];
+        
+        memset(matrix, 0, 147);
+        
+        for(int i=0; i<len; i++)
+        {
+            xadowLed.getMatrix(&matrix[7*(i+1)], str[i]);
+        }
+        
+        len++;
+        
+        for(int i=0; i<len-1; i++)
+        {
+            for(int j=0; j<7; j++)
+            {
+                matrix_i[j] = matrix[7*i+j];
+                matrix_i[j] <<= 8;
+                matrix_i[j] += matrix[7*(i+1)+j]<<2;
+            }
+            
+            for(int k=0; k<6; k++)
+            {
+                putIntMatrix(matrix_i);
+                
+               /* if(cmd_get)
+                {
+                    cmd_get = 0;
+                    return ;
+                }*/
+                delay(ts/5);
+                
+                for(int m=0; m<7; m++)
+                {
+                    matrix_i[m] <<= 1;
+                }
+            }
+        } 
+        
+        if (STR_ONCE == cycle)return;
+    }
+}
+
+
 void setup()
 {
     Serial.begin(115200);
@@ -111,6 +126,8 @@ void loop()
 {
 
     
-    dispStringSlide("hello world!!", 800);
+    //dispStringSlide("hello world!!", 500);
+    
+    dispStringSlide(1, 500, 11, (unsigned char *)"hello world");
     
 }

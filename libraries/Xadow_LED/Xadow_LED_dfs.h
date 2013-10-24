@@ -43,6 +43,24 @@
                         
 
 
+// cmd
+#define CMD_SETMODE     0x01
+#define CMD_SLEEP       0x02
+#define CMD_DISPMATRIX  0x03
+#define CMD_DISPCHAR    0x04
+#define CMD_DISPSTR     0x05
+#define CMD_DISPOINT    0x06
+
+// DIRECTION
+#define DIR_NORMAL      0x00
+#define DIR_LEFT        0x01
+#define DIR_RIGHT       0x02
+#define DIR_DOWN        0x03
+
+// string cycle mode
+#define STR_ONCE        0x01
+#define STR_LOOP        0x02
+
 #endif
 
 /*********************************************************************************************************
